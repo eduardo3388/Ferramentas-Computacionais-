@@ -1,0 +1,615 @@
+> 
+> f <- function(x){
++     if(x <= 15){ #? no caso, o valor é 300
++         return("Executei essa ação")
++     }else{
++         
++         return("Executei Aquela ação")
++     }
++ }
+> 
+> f <- function(x){
++     if(x <= 15){ #? no caso, o valor é 300
++         return("Executei essa ação")
++     }else{
++         
++         return("Executei Aquela ação")
++     }
++ } 
+> ados %>%
++     mutate(
++         nova_var = f(height)
++     ) %>%
++     select(height, nova_var) %>% head(30)
+Error in mutate(., nova_var = f(height)) : object 'ados' not found
+> dados %>%
++     mutate(
++         tamanho = ifelse(
++             height < 15,
++             "baixinho",
++             "altão"
++         )
++     ) %>% head
+        name pokedex.id height weight  type secundary.type hp attack
+1  bulbasaur          1      7     69 grass         poison 45     49
+2    ivysaur          2     10    130 grass         poison 60     62
+3   venusaur          3     20   1000 grass         poison 80     82
+4 charmander          4      6     85  fire           None 39     52
+5 charmeleon          5     11    190  fire           None 58     64
+6  charizard          6     17    905  fire         flying 78     84
+  defense sp.atk sp.def speed  tamanho
+1      49     65     65    45 baixinho
+2      63     80     80    60 baixinho
+3      83    100    100    80    altão
+4      43     60     50    65 baixinho
+5      58     80     65    80 baixinho
+6      78    109     85   100    altão
+> dados %>%
++     mutate(
++         tamanho = case_when(
++             height < 5 ~ "baixinho",
++             height < 10 ~ "pequeno",
++             height < 15 ~ "médio",
++             TRUE ~ "altão"
++         )
++     ) %>% head
+        name pokedex.id height weight  type secundary.type hp attack
+1  bulbasaur          1      7     69 grass         poison 45     49
+2    ivysaur          2     10    130 grass         poison 60     62
+3   venusaur          3     20   1000 grass         poison 80     82
+4 charmander          4      6     85  fire           None 39     52
+5 charmeleon          5     11    190  fire           None 58     64
+6  charizard          6     17    905  fire         flying 78     84
+  defense sp.atk sp.def speed tamanho
+1      49     65     65    45 pequeno
+2      63     80     80    60   médio
+3      83    100    100    80   altão
+4      43     60     50    65 pequeno
+5      58     80     65    80   médio
+6      78    109     85   100   altão
+> df_means <- dados %>%
++     group_by(type) %>%
++     summarise(
++         media_h = mean(height),
++         media_w = mean(weight)
++     )
+> df_means
+# A tibble: 18 × 3
+   type     media_h media_w
+   <chr>      <dbl>   <dbl>
+ 1 bug         8.64    327.
+ 2 dark       12.5     616.
+ 3 dragon     19.1     992.
+ 4 electric    9.92    408.
+ 5 fairy       8.38    255.
+ 6 fighting   12.7     617.
+ 7 fire       11.7     606.
+ 8 flying     10.7     381.
+ 9 ghost      11.3     614.
+10 grass       9.21    327.
+11 ground     13.5    1232.
+12 ice        12.0     951.
+13 normal      9.97    438.
+14 poison     17.5     622.
+15 psychic    10.5     532.
+16 rock       13.9    1200.
+17 steel      18.2    2053.
+18 water      12.7     523.
+> df_means %>% 
++     filter(grepl("^g", type)) #REGEX
+# A tibble: 3 × 3
+  type   media_h media_w
+  <chr>    <dbl>   <dbl>
+1 ghost    11.3     614.
+2 grass     9.21    327.
+3 ground   13.5    1232.
+> 
+> df_means %>% 
++     filter(grepl("g$", type)) #REGEX
+# A tibble: 3 × 3
+  type     media_h media_w
+  <chr>      <dbl>   <dbl>
+1 bug         8.64    327.
+2 fighting   12.7     617.
+3 flying     10.7     381.
+> 
+> df_means %>% 
++     filter(grepl(".+g.+", type)) #REGEX
+# A tibble: 2 × 3
+  type     media_h media_w
+  <chr>      <dbl>   <dbl>
+1 dragon      19.1    992.
+2 fighting    12.7    617.
+> 
+> df_means %>% 
++     filter(grepl(".+g.*", type)) #REGEX
+# A tibble: 4 × 3
+  type     media_h media_w
+  <chr>      <dbl>   <dbl>
+1 bug         8.64    327.
+2 dragon     19.1     992.
+3 fighting   12.7     617.
+4 flying     10.7     381.
+> 
+> df_means <- df_means %>% 
++     filter(!grepl("^g", type))
+> df_means
+# A tibble: 15 × 3
+   type     media_h media_w
+   <chr>      <dbl>   <dbl>
+ 1 bug         8.64    327.
+ 2 dark       12.5     616.
+ 3 dragon     19.1     992.
+ 4 electric    9.92    408.
+ 5 fairy       8.38    255.
+ 6 fighting   12.7     617.
+ 7 fire       11.7     606.
+ 8 flying     10.7     381.
+ 9 ice        12.0     951.
+10 normal      9.97    438.
+11 poison     17.5     622.
+12 psychic    10.5     532.
+13 rock       13.9    1200.
+14 steel      18.2    2053.
+15 water      12.7     523.
+> #? vamos adicionar um grupo que não existe
+> 
+> novo_grupo <- data.frame(
++     type = "Vozes da minha cabeça",
++     media_h = 1000,
++     media_w = 400.82
++ )
+> 
+> novo_grupo <--data.frame( type ="Vozes da minha cabeça, mdeia_h =1000, media_w = 400.82")
+Error in FUN(left) : invalid argument to unary operator
+> novo_grupo <- data.frame(
++     type = "Vozes da minha cabeça",
++     media_h = 1000,
++     media_w = 400.82
++ )
+> 
+> df_means <- rbind(df_means, novo_grupo)
+> df <- full_join(dados, df_means, by = "type")
+> View(df)
+> df%>%
++     filter(type=="bug")%>% head(15)
+         name pokedex.id height weight type secundary.type hp attack
+1    caterpie         10      3     29  bug           None 45     30
+2     metapod         11      7     99  bug           None 50     20
+3  butterfree         12     11    320  bug         flying 60     45
+4      weedle         13      3     32  bug         poison 40     35
+5      kakuna         14      6    100  bug         poison 45     25
+6    beedrill         15     10    295  bug         poison 65     90
+7       paras         46      3     54  bug          grass 35     70
+8    parasect         47     10    295  bug          grass 60     95
+9     venonat         48     10    300  bug         poison 60     55
+10   venomoth         49     15    125  bug         poison 70     65
+11    scyther        123     15    560  bug         flying 70    110
+12     pinsir        127     15    550  bug           None 65    125
+13     ledyba        165     10    108  bug         flying 40     20
+14     ledian        166     14    356  bug         flying 55     35
+15   spinarak        167      5     85  bug         poison 40     60
+   defense sp.atk sp.def speed media_h  media_w
+1       35     20     20    45    8.64 326.7067
+2       55     25     25    30    8.64 326.7067
+3       50     90     80    70    8.64 326.7067
+4       30     20     20    50    8.64 326.7067
+5       50     25     25    35    8.64 326.7067
+6       40     45     80    75    8.64 326.7067
+7       55     45     55    25    8.64 326.7067
+8       80     60     80    30    8.64 326.7067
+9       50     40     55    45    8.64 326.7067
+10      60     90     75    90    8.64 326.7067
+11      80     55     80   105    8.64 326.7067
+12     100     55     70    85    8.64 326.7067
+13      30     40     80    55    8.64 326.7067
+14      50     55    110    85    8.64 326.7067
+15      40     40     40    30    8.64 326.7067
+> df%>% tail()
+         name pokedex.id height weight                  type
+886  drakloak        886     14    110                dragon
+887 dragapult        887     30    500                dragon
+888    zacian        888     28   1100                 fairy
+889 zamazenta        889     29   2100              fighting
+890 eternatus        890    200   9500                poison
+891      <NA>         NA     NA     NA Vozes da minha cabeça
+    secundary.type  hp attack defense sp.atk sp.def speed     media_h
+886          ghost  68     80      50     60     50   102   19.066667
+887          ghost  88    120      75    100     75   142   19.066667
+888           None  92    130     115     80    115   138    8.380952
+889           None  92    130     115     80    115   138   12.676471
+890         dragon 140     85      95    145     95   130   17.457143
+891           <NA>  NA     NA      NA     NA     NA    NA 1000.000000
+     media_w
+886 991.9333
+887 991.9333
+888 254.6667
+889 616.7941
+890 621.9143
+891 400.8200
+> dados <- readr::read_rds("Dados/imdb.rds")
+> 
+> head(dados)
+# A tibble: 6 × 20
+  id_filme  titulo       ano data_lancamento generos duracao pais  idioma
+  <chr>     <chr>      <dbl> <chr>           <chr>     <dbl> <chr> <chr> 
+1 tt0092699 Broadcast…  1987 1988-04-01      Comedy…     133 USA   Engli…
+2 tt0037931 Murder, H…  1945 1945-06-23      Comedy…      91 USA   Engli…
+3 tt0183505 Me, Mysel…  2000 2000-09-08      Comedy      116 USA   Engli…
+4 tt0033945 Never Giv…  1941 1947-05-02      Comedy…      71 USA   Engli…
+5 tt0372122 Adam & St…  2005 2007-05-17      Comedy…      99 USA   Engli…
+6 tt3703836 Henry Gam…  2015 2016-01-08      Drama        87 USA   Engli…
+# ? 12 more variables: orcamento <dbl>, receita <dbl>,
+#   receita_eua <dbl>, nota_imdb <dbl>, num_avaliacoes <dbl>,
+#   direcao <chr>, roteiro <chr>, producao <chr>, elenco <chr>,
+#   descricao <chr>, num_criticas_publico <dbl>,
+#   num_criticas_critica <dbl>
+> names(dados)
+ [1] "id_filme"             "titulo"               "ano"                 
+ [4] "data_lancamento"      "generos"              "duracao"             
+ [7] "pais"                 "idioma"               "orcamento"           
+[10] "receita"              "receita_eua"          "nota_imdb"           
+[13] "num_avaliacoes"       "direcao"              "roteiro"             
+[16] "producao"             "elenco"               "descricao"           
+[19] "num_criticas_publico" "num_criticas_critica"
+ df <- dados %>%
++  select(titulo, orcamento, receita, receita_eua)
+> df
+# A tibble: 11,340 × 4
+   titulo                            orcamento   receita receita_eua
+   <chr>                                 <dbl>     <dbl>       <dbl>
+ 1 Broadcast News                     20000000  67331309    51249404
+ 2 Murder, He Says                          NA        NA          NA
+ 3 Me, Myself & Irene                 51000000 149270999    90570999
+ 4 Never Give a Sucker an Even Break        NA        NA          NA
+ 5 Adam & Steve                             NA    309404      309404
+ 6 Henry Gamble's Birthday Party            NA        NA          NA
+ 7 No Way Out                         15000000  35509515    35509515
+ 8 Welcome Home, Roscoe Jenkins       35000000  43655418    42436517
+ 9 Some Kind of Wonderful                   NA  18553948    18553948
+10 The Family That Preys                    NA  37105289    37105289
+# ? 11,330 more rows
+# ? Use `print(n = ...)` to see more rows
+> library(tidyr)
+> dados <- readr::read_rds("Dados/imdb.rds")
+> 
+> head(dados)
+# A tibble: 6 × 20
+  id_filme  titulo       ano data_lancamento generos duracao pais  idioma
+  <chr>     <chr>      <dbl> <chr>           <chr>     <dbl> <chr> <chr> 
+1 tt0092699 Broadcast…  1987 1988-04-01      Comedy…     133 USA   Engli…
+2 tt0037931 Murder, H…  1945 1945-06-23      Comedy…      91 USA   Engli…
+3 tt0183505 Me, Mysel…  2000 2000-09-08      Comedy      116 USA   Engli…
+4 tt0033945 Never Giv…  1941 1947-05-02      Comedy…      71 USA   Engli…
+5 tt0372122 Adam & St…  2005 2007-05-17      Comedy…      99 USA   Engli…
+6 tt3703836 Henry Gam…  2015 2016-01-08      Drama        87 USA   Engli…
+# ? 12 more variables: orcamento <dbl>, receita <dbl>,
+#   receita_eua <dbl>, nota_imdb <dbl>, num_avaliacoes <dbl>,
+#   direcao <chr>, roteiro <chr>, producao <chr>, elenco <chr>,
+#   descricao <chr>, num_criticas_publico <dbl>,
+#   num_criticas_critica <dbl>
+> names(dados)
+ [1] "id_filme"             "titulo"               "ano"                 
+ [4] "data_lancamento"      "generos"              "duracao"             
+ [7] "pais"                 "idioma"               "orcamento"           
+[10] "receita"              "receita_eua"          "nota_imdb"           
+[13] "num_avaliacoes"       "direcao"              "roteiro"             
+[16] "producao"             "elenco"               "descricao"           
+[19] "num_criticas_publico" "num_criticas_critica"
+> df <- dados %>%
++     select(titulo, orcamento, receita, receita_eua)
+> df
+# A tibble: 11,340 × 4
+   titulo                            orcamento   receita receita_eua
+   <chr>                                 <dbl>     <dbl>       <dbl>
+ 1 Broadcast News                     20000000  67331309    51249404
+ 2 Murder, He Says                          NA        NA          NA
+ 3 Me, Myself & Irene                 51000000 149270999    90570999
+ 4 Never Give a Sucker an Even Break        NA        NA          NA
+ 5 Adam & Steve                             NA    309404      309404
+ 6 Henry Gamble's Birthday Party            NA        NA          NA
+ 7 No Way Out                         15000000  35509515    35509515
+ 8 Welcome Home, Roscoe Jenkins       35000000  43655418    42436517
+ 9 Some Kind of Wonderful                   NA  18553948    18553948
+10 The Family That Preys                    NA  37105289    37105289
+# ? 11,330 more rows
+# ? Use `print(n = ...)` to see more rows
+> df <- dados %>%
++     select(titulo, orcamento, receita, receita_eua)
+> df
+# A tibble: 11,340 × 4
+   titulo                            orcamento   receita receita_eua
+   <chr>                                 <dbl>     <dbl>       <dbl>
+ 1 Broadcast News                     20000000  67331309    51249404
+ 2 Murder, He Says                          NA        NA          NA
+ 3 Me, Myself & Irene                 51000000 149270999    90570999
+ 4 Never Give a Sucker an Even Break        NA        NA          NA
+ 5 Adam & Steve                             NA    309404      309404
+ 6 Henry Gamble's Birthday Party            NA        NA          NA
+ 7 No Way Out                         15000000  35509515    35509515
+ 8 Welcome Home, Roscoe Jenkins       35000000  43655418    42436517
+ 9 Some Kind of Wonderful                   NA  18553948    18553948
+10 The Family That Preys                    NA  37105289    37105289
+# ? 11,330 more rows
+
+
+df_long <- df %>%
++     slice(1:10) %>%
++     tidyr::pivot_longer(2:4, values_to= "valor", names_to ="tipo de valor")
+> 
+> view(df %>% slice(1:10))
+Error in view(df %>% slice(1:10)) : could not find function "view"
+> df_long <- df %>%
++     slice(1:10) %>%
++     tidyr::pivot_longer(2:4, values_to= "valor", names_to ="tipo de valor")
+> 
+> view(df %>% slice(1:10))
+Error in view(df %>% slice(1:10)) : could not find function "view"
+> dados <- readr::read_rds("Dados/imdb.rds")
+> 
+> head(dados)
+# A tibble: 6 × 20
+  id_filme  titulo       ano data_lancamento generos duracao pais  idioma
+  <chr>     <chr>      <dbl> <chr>           <chr>     <dbl> <chr> <chr> 
+1 tt0092699 Broadcast…  1987 1988-04-01      Comedy…     133 USA   Engli…
+2 tt0037931 Murder, H…  1945 1945-06-23      Comedy…      91 USA   Engli…
+3 tt0183505 Me, Mysel…  2000 2000-09-08      Comedy      116 USA   Engli…
+4 tt0033945 Never Giv…  1941 1947-05-02      Comedy…      71 USA   Engli…
+5 tt0372122 Adam & St…  2005 2007-05-17      Comedy…      99 USA   Engli…
+6 tt3703836 Henry Gam…  2015 2016-01-08      Drama        87 USA   Engli…
+# ? 12 more variables: orcamento <dbl>, receita <dbl>,
+#   receita_eua <dbl>, nota_imdb <dbl>, num_avaliacoes <dbl>,
+#   direcao <chr>, roteiro <chr>, producao <chr>, elenco <chr>,
+#   descricao <chr>, num_criticas_publico <dbl>,
+#   num_criticas_critica <dbl>
+> names(dados)
+ [1] "id_filme"             "titulo"               "ano"                 
+ [4] "data_lancamento"      "generos"              "duracao"             
+ [7] "pais"                 "idioma"               "orcamento"           
+[10] "receita"              "receita_eua"          "nota_imdb"           
+[13] "num_avaliacoes"       "direcao"              "roteiro"             
+[16] "producao"             "elenco"               "descricao"           
+[19] "num_criticas_publico" "num_criticas_critica"
+> 
+> df <- dados %>%
++     select(titulo, orcamento, receita, receita_eua)
+> df
+# A tibble: 11,340 × 4
+   titulo                            orcamento   receita receita_eua
+   <chr>                                 <dbl>     <dbl>       <dbl>
+ 1 Broadcast News                     20000000  67331309    51249404
+ 2 Murder, He Says                          NA        NA          NA
+ 3 Me, Myself & Irene                 51000000 149270999    90570999
+ 4 Never Give a Sucker an Even Break        NA        NA          NA
+ 5 Adam & Steve                             NA    309404      309404
+ 6 Henry Gamble's Birthday Party            NA        NA          NA
+ 7 No Way Out                         15000000  35509515    35509515
+ 8 Welcome Home, Roscoe Jenkins       35000000  43655418    42436517
+ 9 Some Kind of Wonderful                   NA  18553948    18553948
+10 The Family That Preys                    NA  37105289    37105289
+# ? 11,330 more rows
+# ? Use `print(n = ...)` to see more rows
+> library(tidyr)
+> df_long <- df %>%
++     slice(1:10) %>%
++     tidyr::pivot_longer(2:4, values_to= "valor", names_to ="tipo de valor")
+> 
+> view(df %>% slice(1:10))
+Error in view(df %>% slice(1:10)) : could not find function "view"
+> df_long <- df %>%
++     slice(1:10) %>%
++     tidyr::pivot_longer(2:4, values_to= "valor", names_to ="tipo de valor")
+> 
+> view(df %>% slice(1:10))
+Error in view(df %>% slice(1:10)) : could not find function "view"
+> df_long <- df %>%
++     slice(1:10) %>%
++     tidyr::pivot_longer(2:4, values_to= "valor", names_to ="tipo de valor")
+> 
+> view(df %>% slice(1:10))
+Error in view(df %>% slice(1:10)) : could not find function "view"
+> library(dplyr)
+> 
+> #? E outras bibliotecas que serão úteis
+> library(lubridate)
+> library(stringr)
+> library(tidyr)
+> 
+> #? baixado de https://livro.curso-r.com/
+> 
+> dados <- readr::read_rds("Dados/imdb.rds")
+> 
+> head(dados)
+# A tibble: 6 × 20
+  id_filme  titulo       ano data_lancamento generos duracao pais  idioma
+  <chr>     <chr>      <dbl> <chr>           <chr>     <dbl> <chr> <chr> 
+1 tt0092699 Broadcast…  1987 1988-04-01      Comedy…     133 USA   Engli…
+2 tt0037931 Murder, H…  1945 1945-06-23      Comedy…      91 USA   Engli…
+3 tt0183505 Me, Mysel…  2000 2000-09-08      Comedy      116 USA   Engli…
+4 tt0033945 Never Giv…  1941 1947-05-02      Comedy…      71 USA   Engli…
+5 tt0372122 Adam & St…  2005 2007-05-17      Comedy…      99 USA   Engli…
+6 tt3703836 Henry Gam…  2015 2016-01-08      Drama        87 USA   Engli…
+# ? 12 more variables: orcamento <dbl>, receita <dbl>,
+#   receita_eua <dbl>, nota_imdb <dbl>, num_avaliacoes <dbl>,
+#   direcao <chr>, roteiro <chr>, producao <chr>, elenco <chr>,
+#   descricao <chr>, num_criticas_publico <dbl>,
+#   num_criticas_critica <dbl>
+> names(dados)
+ [1] "id_filme"             "titulo"               "ano"                 
+ [4] "data_lancamento"      "generos"              "duracao"             
+ [7] "pais"                 "idioma"               "orcamento"           
+[10] "receita"              "receita_eua"          "nota_imdb"           
+[13] "num_avaliacoes"       "direcao"              "roteiro"             
+[16] "producao"             "elenco"               "descricao"           
+[19] "num_criticas_publico" "num_criticas_critica"
+> 
+> df <- dados %>%
++     select(titulo, orcamento, receita, receita_eua)
+> df
+# A tibble: 11,340 × 4
+   titulo                            orcamento   receita receita_eua
+   <chr>                                 <dbl>     <dbl>       <dbl>
+ 1 Broadcast News                     20000000  67331309    51249404
+ 2 Murder, He Says                          NA        NA          NA
+ 3 Me, Myself & Irene                 51000000 149270999    90570999
+ 4 Never Give a Sucker an Even Break        NA        NA          NA
+ 5 Adam & Steve                             NA    309404      309404
+ 6 Henry Gamble's Birthday Party            NA        NA          NA
+ 7 No Way Out                         15000000  35509515    35509515
+ 8 Welcome Home, Roscoe Jenkins       35000000  43655418    42436517
+ 9 Some Kind of Wonderful                   NA  18553948    18553948
+10 The Family That Preys                    NA  37105289    37105289
+# ? 11,330 more rows
+# ? Use `print(n = ...)` to see more rows
+> df_long <- df %>%
++     slice(1:10) %>%
++     tidyr::pivot_longer(2:4, values_to= "valor", names_to ="tipo de valor")
+> 
+> view(df %>% slice(1:10))
+Error in view(df %>% slice(1:10)) : could not find function "view"
+> #Cada barra de uma coluna e cores distintas
+> df_long <- df %>%
++     slice(1:10) %>%
++     tidyr::pivot_longer(2:4, values_to= "valor", names_to ="tipo de valor")
+> 
+> View(df %>% slice(1:10))
+> View(df_long)
+> library(ggplot2)
+> df_long
+# A tibble: 30 × 3
+   titulo                            `tipo de valor`     valor
+   <chr>                             <chr>               <dbl>
+ 1 Broadcast News                    orcamento        20000000
+ 2 Broadcast News                    receita          67331309
+ 3 Broadcast News                    receita_eua      51249404
+ 4 Murder, He Says                   orcamento              NA
+ 5 Murder, He Says                   receita                NA
+ 6 Murder, He Says                   receita_eua            NA
+ 7 Me, Myself & Irene                orcamento        51000000
+ 8 Me, Myself & Irene                receita         149270999
+ 9 Me, Myself & Irene                receita_eua      90570999
+10 Never Give a Sucker an Even Break orcamento              NA
+# ? 20 more rows
+# ? Use `print(n = ...)` to see more rows
+> library(ggplot2)
+> ggplot()+
++     geom_col(data = df_long, aes(x = titulo, y=valor, fill= 'tipo de valor'), 
++              position =position_dodge2()
++     )+
++     theme_bw()+
++     theme(
++         axis.text.x = element_text(angle = 45, hjust =1.0)
++     )
+Warning message:
+Removed 12 rows containing missing values (`geom_col()`). 
+> ## Pivot wider
+> df_long %>% 
++     tidyr::pivot_wider(names_from = `Tipo de Valor`, values_from = Valor)
+Error in `tidyr::pivot_wider()`:
+! Can't subset columns that don't exist.
+? Column `Tipo de Valor` doesn't exist.
+Run `rlang::last_trace()` to see where the error occurred.
+> ## Pivot wider
+> df_long %>% 
++     tidyr::pivot_wider(names_from = `Tipo de Valor`, values_from = Valor)
+Error in `tidyr::pivot_wider()`:
+! Can't subset columns that don't exist.
+? Column `Tipo de Valor` doesn't exist.
+Run `rlang::last_trace()` to see where the error occurred.
+> #? E outras bibliotecas que serão úteis
+> > library(lubridate)
+Error: unexpected '>' in ">"
+> dados <- readr::read_rds("Dados/imdb.rds")
+> 
+> head(dados)
+# A tibble: 6 × 20
+  id_filme  titulo       ano data_lancamento generos duracao pais  idioma
+  <chr>     <chr>      <dbl> <chr>           <chr>     <dbl> <chr> <chr> 
+1 tt0092699 Broadcast…  1987 1988-04-01      Comedy…     133 USA   Engli…
+2 tt0037931 Murder, H…  1945 1945-06-23      Comedy…      91 USA   Engli…
+3 tt0183505 Me, Mysel…  2000 2000-09-08      Comedy      116 USA   Engli…
+4 tt0033945 Never Giv…  1941 1947-05-02      Comedy…      71 USA   Engli…
+5 tt0372122 Adam & St…  2005 2007-05-17      Comedy…      99 USA   Engli…
+6 tt3703836 Henry Gam…  2015 2016-01-08      Drama        87 USA   Engli…
+# ? 12 more variables: orcamento <dbl>, receita <dbl>,
+#   receita_eua <dbl>, nota_imdb <dbl>, num_avaliacoes <dbl>,
+#   direcao <chr>, roteiro <chr>, producao <chr>, elenco <chr>,
+#   descricao <chr>, num_criticas_publico <dbl>,
+#   num_criticas_critica <dbl>
+> names(dados)
+ [1] "id_filme"             "titulo"               "ano"                 
+ [4] "data_lancamento"      "generos"              "duracao"             
+ [7] "pais"                 "idioma"               "orcamento"           
+[10] "receita"              "receita_eua"          "nota_imdb"           
+[13] "num_avaliacoes"       "direcao"              "roteiro"             
+[16] "producao"             "elenco"               "descricao"           
+[19] "num_criticas_publico" "num_criticas_critica"
+> 
+> df <- dados %>%
++     select(titulo, orcamento, receita, receita_eua)
+> df
+# A tibble: 11,340 × 4
+   titulo                            orcamento   receita receita_eua
+   <chr>                                 <dbl>     <dbl>       <dbl>
+ 1 Broadcast News                     20000000  67331309    51249404
+ 2 Murder, He Says                          NA        NA          NA
+ 3 Me, Myself & Irene                 51000000 149270999    90570999
+ 4 Never Give a Sucker an Even Break        NA        NA          NA
+ 5 Adam & Steve                             NA    309404      309404
+ 6 Henry Gamble's Birthday Party            NA        NA          NA
+ 7 No Way Out                         15000000  35509515    35509515
+ 8 Welcome Home, Roscoe Jenkins       35000000  43655418    42436517
+ 9 Some Kind of Wonderful                   NA  18553948    18553948
+10 The Family That Preys                    NA  37105289    37105289
+# ? 11,330 more rows
+# ? Use `print(n = ...)` to see more rows
+> matriz_correlacao = np.corrcoef(dados, rowvar=
++                                     matriz_correlacao = np.corrcoef(d
+Error: unexpected '=' in:
+"matriz_correlacao = np.corrcoef(dados, rowvar=
+                                    matriz_correlacao ="
+> library(dplyr)
+> df <- dados %>%
++     select(titulo, orcamento, recceita, receita_eua)
+Error in `select()`:
+! Can't subset columns that don't exist.
+? Column `recceita` doesn't exist.
+Run `rlang::last_trace()` to see where the error occurred.
+> library(dplyr)
+> df <- dados %>%
++     select(titulo, orcamento, receita, receita_eua)
+> df %>%
++     df %>%
++     select_if(is.numeric) %>%
++     filter(complete.cases(.)) %>%
++     cor()
+Error in df(.) : argument "df1" is missing, with no default
+> library(dplyr)
+> df <- dados %>%
++     select(titulo, orcamento, receita, receita_eua)
+> df %>%
++ library(dplyr)
+Error in library(., dplyr) : there is no package called ‘.’
+> library(dplyr)
+> df <- dados %>%
++     select(titulo, orcamento, receita, receita_eua)
+> df %>%
++ df %>%
++     select_if(is.numeric) %>%
++     filter(complete.cases(.)) %>%
++     cor()
+Error in df(.) : argument "df1" is missing, with no default
+#TODO checar se cada filme tem apenas um genero associado
+
+Atividade 
+#calcular correlação do conjunto inteiro entre as váriaveis 
+> df %>%
++     select_if(is.numeric) %>%
++     filter(complete.cases(.)) %>%
++     cor()
+            orcamento   receita receita_eua
+orcamento   1.0000000 0.7458575   0.7003084
+receita     0.7458575 1.0000000   0.9526747
+receita_eua 0.7003084 0.9526747   1.0000000
+Session restored from your saved work on 2023-May-25 18:36:16 UTC (3 days ago)
+> 
