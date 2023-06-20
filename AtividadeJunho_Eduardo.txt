@@ -1,0 +1,74 @@
+Atividade do dia 01/06
+df <- dados %>%
++     group_by(type) %>% 
++     summarise(
++         media_h = mean(height),
++         media_w = mean(weight)
++     ) 
+> 
+> fator <- max(df$media_w)/max(df$media_h)
+> fator
+[1] 107.6608
+> 
+> df$media_h <- df$media_h*fator
+> 
+> df %>% 
++ tidyr::pivot_longer(cols = c("media_h", "media_w"), names_to = "tipo", values_to = "media") %>% 
++     ggplot()+
++     geom_col(aes(x = type, y = media, color = tipo, fill = tipo), position = position_dodge2())+
++     scale_y_continuous(
++         
++         # Features of the first axis
++         name = "Média do peso",
++         
++         # Add a second axis and specify its features
++         sec.axis = sec_axis(~./fator, name="Média do altura"),
++         expand = c(0,0)
++     )+
++     scale_color_brewer(palette = "Set1")+
++     scale_fill_brewer(palette = "Set1")+
++     theme_bw()+
++     theme(
++         axis.title = element_text(size = 18, face = "bold"),
++         axis.text = element_text(size = 14)
++     )
+
+Código para ajuste do gráfico o gráfico inicial.
+> df <- dados %>%
++     group_by(type) %>% 
++     summarise(
++         media_h = mean(height),
++         media_w = mean(weight)
++     ) 
+> 
+> fator <- max(df$media_w)/max(df$media_h)
+> fator
+[1] 107.6608
+> 
+> df$media_h <- df$media_h*fator
+> 
+> df %>% 
++     tidyr::pivot_longer(cols = c("media_h", "media_w"), names_to = "tipo", values_to = "media") %>% 
++     ggplot()+
++     geom_col(aes(x = type, y = media, color = tipo, fill = tipo), position = position_dodge2())+
++     scale_y_continuous(
++         
++         # Features of the first axis
++         name = "Média do peso",
++         
++         # Add a second axis and specify its features
++         sec.axis = sec_axis(~./fator, name="Média da altura"),
++         expand = c(0,0)
++     )+
++     scale_color_brewer(palette = "Set2")+
++     scale_fill_brewer(palette = "Set2")+
++     labs(title = "Gráfico Eduardo")+
++     theme_clean()+
++     theme(
++         axis.title = element_text(size = 12, face = "bold"),
++         axis.text = element_text(size = 12),
++         legend.position = "bottom",
++         legend.text = element_text(size = 12),
++         legend.title = element_text(size = 12),
++         axis.text.x = element_text(size = 14, angle = 45, hjust = 1.0)
++     )
